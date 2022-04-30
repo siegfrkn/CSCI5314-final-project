@@ -1,0 +1,22 @@
+;; TODO
+
+
+;;; GLOBAL VARIABLES
+
+globals [
+  number-dead-plague ;; keep track of dead from plague
+]
+
+;;; GO METHODS
+
+to have-plague
+  if any? other turtles-here with [color = red] [
+    set plague true
+    set color red
+  ]
+  if plague = true [
+    set plague-resistance plague-resistance - 1]
+  if plague-resistance < 0 [
+    set number-dead-plague number-dead-plague + 1
+    die]
+end

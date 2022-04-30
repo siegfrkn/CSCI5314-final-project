@@ -1,0 +1,117 @@
+;; Adapted in part by Katrina Siegfried from Flocking.nlogo by Uri Wilensky
+;; 2022 04 30 for CSCI 5413
+
+;; use optimal foraging theory + flocking
+;; prarie dogs walk fairly randomly with lower flock cohesion unless one of the following happens
+;; 1. return to burrow chirp - all prarie dogs return to burrow (for this would we need a TODO to add threat to initiate this?)
+;; 2. found something chip - flock to the finder
+
+;; TODO
+;; gradient ascent/descent be able to move with intelligence relative to their burrow relative to coterie and relative to food source
+;; add attraction to burrow
+;; update return-to-burrow function
+
+
+;;; GLOBAL VARIABLES
+
+globals [
+    max-heading-turn
+    max-attraction-turn
+    max-repulsion-turn
+    vision
+    minimum-separation
+]
+
+;;; SETUP METHODS
+
+to set-up-flocking
+    set max-heading-turn 5.0
+    set max-attraction-turn 3.0
+    set max-repulsion-turn 1.5
+    set vision 10
+    set minimum-separation 1.0
+end
+
+;;; HELPER METHODS FROM FLOCKING MODEL
+
+;; turn right by "turn" degrees (or left if "turn" is negative),
+;; but never turn more than "max-turn" degrees
+to turn-at-most [turn max-turn]  ;; turtle procedure
+  ifelse abs turn > max-turn
+    [ ifelse turn > 0
+        [ rt max-turn ]
+        [ lt max-turn ] ]
+    [ rt turn ]
+end
+
+to turn-towards [new-heading max-turn]  ;; turtle procedure
+  turn-at-most (subtract-headings new-heading heading) max-turn
+end
+
+to turn-away [new-heading max-turn]  ;; turtle procedure
+  turn-at-most (subtract-headings heading new-heading) max-turn
+end
+
+;;; FLOCK METHODS
+
+to flock  ;; turtle procedure
+  find-flockmates
+  if any? flockmates
+    [ find-nearest-neighbor
+      ifelse distance nearest-neighbor < minimum-separation
+        [ repulsion ]
+        [ align
+          attraction ] ]
+end
+
+;; TODO only fine flockmates that are in turtle link
+to find-flockmates  ;; turtle procedure
+  set flockmates other turtles in-radius vision
+end
+
+to find-nearest-neighbor ;; turtle procedure
+  set nearest-neighbor min-one-of flockmates [distance myself]
+end
+
+;;; REPULSION METHODS
+
+to repulsion  ;; turtle procedure
+  turn-away ([heading] of nearest-neighbor) max-repulsion-turn
+end
+
+;;; HEADING / ALIGN METHODS
+
+to align  ;; turtle procedure
+  turn-towards average-flockmate-heading max-heading-turn
+end
+
+to-report average-flockmate-heading  ;; turtle procedure
+  ;; We can't just average the heading variables here.
+  ;; For example, the average of 1 and 359 should be 0,
+  ;; not 180.  So we have to use trigonometry.
+  let x-component sum [dx] of flockmates
+  let y-component sum [dy] of flockmates
+  ifelse x-component = 0 and y-component = 0
+    [ report heading ]
+    [ report atan x-component y-component ]
+end
+
+;;; ATTRACTION METHODS
+
+to attraction  ;; turtle procedure
+  turn-towards average-heading-towards-flockmates max-attraction-turn
+end
+
+to-report average-heading-towards-flockmates  ;; turtle procedure
+  ;; "towards myself" gives us the heading from the other turtle
+  ;; to me, but we want the heading from me to the other turtle,
+  ;; so we add 180
+  let x-component mean [sin (towards myself + 180)] of flockmates
+  let y-component mean [cos (towards myself + 180)] of flockmates
+  ifelse x-component = 0 and y-component = 0
+    [ report heading ]
+    [ report atan x-component y-component ]
+end
+
+to return-to-burrow
+end

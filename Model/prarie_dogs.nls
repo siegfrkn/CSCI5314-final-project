@@ -1,0 +1,61 @@
+;;; ENVIRONMENT INIT
+
+breed [males male] ;; enables breeding male specific behavior
+breed [females female] ;; enables breeding female specific behavior
+breed [pups pup] ;; enables pup specific behavior
+
+;;; TURTLE PROPERTIES
+turtles-own[
+  hunger ;; range from 0 to 100, death at 100 (potentially increase foraging activity / risk tolerance as hunger increases?)
+  plague ;; does this prairie dog have sylvatic plague
+  plague-resistance ;; used to trigger plague death
+  gender ;; either male or female
+  flockmates         ;; agentset of nearby turtles
+  nearest-neighbor   ;; closest one of our flockmates
+]
+
+;;; SETUP METHODS
+
+to set-up-coteries ;; sprout coteries
+  ask n-of initial-colonies patches [
+    sprout-males 1[ ;; 1 breeding male
+      set shape "sheep"
+      set color blue
+      set size 3
+      set gender "male"
+    ]
+    sprout-females random 5 [ ;; 0-5 breeding females
+      set shape "sheep"
+      set color pink
+      set size 3
+      set gender "female"
+    ]
+  ]
+
+  ask turtles[
+    create-links-with other turtles-here ;; link with members of coterie
+    set plague false
+    set plague-resistance initial-plague-resistance
+    set hunger 0
+    set flockmates no-turtles
+    if random 100 < plague-prevalence [ ;; initialize plague prevalence
+      set plague true
+      set color red
+    ]
+  ]
+end
+
+;;; GO METHODS
+
+to reproduce
+  ask turtles [
+    ask males [
+      ask link-neighbors [
+        sprout-pups random (10 * (1 - contraceptive-rate)) [
+          set shape "sheep"
+          set color green
+        ]
+      ]
+    ]
+  ]
+end

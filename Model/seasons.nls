@@ -1,0 +1,44 @@
+;;; ENVIRONMENT INIT
+
+extensions [time] ;; enables seasonal behavior
+
+;;; GLOBAL VARIABLES
+
+globals [
+  dt ;; time extension date time
+  spring-start
+  summer-start
+  fall-start
+  winter-start
+  season
+]
+
+;;; GO METHODS
+
+to set-up-seasons
+    set dt time:create "2022/05/01 0:00" ;; possibly transition to user input?
+    set dt time:anchor-to-ticks (time:create "2022/01/01") 1 "week"
+    time:anchor-schedule dt 1 "week"
+
+    time:schedule-repeating-event "observer" [ [] -> spring ] 1 1 ;; spring breeding
+    time:schedule-repeating-event-with-period "observer" [ [] -> summer ] dt 3 "months";; summer burrowing
+    time:schedule-repeating-event-with-period "observer" [ [] -> fall ] dt 3 "months";; fall foraging
+    time:schedule-repeating-event-with-period "observer" [ [] -> winter ] dt 3 "months" ;; winter hibernating
+
+end
+
+to spring
+  reproduce
+end
+
+to summer
+end
+
+to fall
+end
+
+to winter
+end
+
+to hibernate
+end
