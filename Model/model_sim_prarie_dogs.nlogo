@@ -6,7 +6,7 @@ __includes["prarie_dogs.nls" "environment.nls" "movement_pattern.nls" "hunger.nl
 
 to setup
   clear-all
-  ; set dt time:create "2022/05/01 0:00" ;; possibly transition to user input?
+
   set-up-seasons
   set-up-coteries
   set-up-grass
@@ -42,12 +42,12 @@ to go
     ;;   ask turtles [ fd 1 ]
 
   ]
+
   set dt time:plus dt 7 "days"
   tick
 end
 
 ;; METADATA FOR SIM INTERFACE BELOW
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 342
