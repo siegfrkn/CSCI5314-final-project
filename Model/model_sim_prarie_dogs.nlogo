@@ -26,6 +26,7 @@ end
 to go
   ask turtles with [feature = "dog"] [
 
+    reproduce
     evaluate-hunger
     have-plague
     search-food
@@ -147,7 +148,7 @@ initial-colonies
 initial-colonies
 0
 100
-6.0
+13.0
 1
 1
 NIL
@@ -192,7 +193,7 @@ plague-prevalence
 plague-prevalence
 0
 100
-0.0
+12.0
 1
 1
 %
@@ -207,7 +208,7 @@ plague-contagiousness
 plague-contagiousness
 0
 100
-0.0
+27.0
 1
 1
 %
@@ -369,7 +370,7 @@ BUTTON
 169
 676
 Found Something!
-;; randomly select finder\nask one-of turtles with [feature = \"dog\"]\n;; set finder color\n[ show \"FOUND SOMETHING SET\"\n;let prev-color color\nif not any? link-neighbors with [found-something = true]\n [set color yellow\n show \"FOUND SOMETHING!\"\n  set found-something true]\n;; send all link-neighbors to finder\n;wait 5\n;; free all link-neighbors\n;; restore finder color\n;set color prev-color\n]
+;; randomly select finder within a single colony\nask one-of turtles with [feature = \"dog\"]\n;; set finder color\n[if not any? link-neighbors with [found-something = true]\n [set color yellow \n set found-something true]\n]
 NIL
 1
 T
@@ -389,7 +390,7 @@ burrow-limit
 burrow-limit
 1
 100
-73.0
+24.0
 1
 1
 NIL
