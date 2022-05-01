@@ -7,8 +7,8 @@
 ;; 2. found something chip - flock to the finder
 
 ;; TODO
-;; gradient ascent/descent be able to move with intelligence relative to their burrow relative to coterie and relative to food source
-;; add attraction to burrow
+;; gradient ascent/descent be able to move relative to food source (optimal foragine theory)
+;; more effectively use burrow-affinity to increase amount of time spent at/close-to burrow
 
 
 ;;; GLOBAL VARIABLES
@@ -27,7 +27,7 @@ to set-up-flocking
     set max-heading-turn 5.0
     set max-attraction-turn 3.0
     set max-repulsion-turn 1.5
-    set vision 10
+    set vision 100
     set minimum-separation 1.0
 end
 
@@ -43,52 +43,50 @@ to turn-at-most [turn max-turn]  ;; turtle procedure
     [ rt turn ]
 end
 
-to turn-towards [new-heading max-turn]  ;; turtle procedure
+to turn-towards [new-heading max-turn]
   turn-at-most (subtract-headings new-heading heading) max-turn
 end
 
-to turn-away [new-heading max-turn]  ;; turtle procedure
+to turn-away [new-heading max-turn]
   turn-at-most (subtract-headings heading new-heading) max-turn
 end
 
 ;;; FLOCK METHODS
 
-to flock  ;; turtle procedure
+to flock
       find-flockmates
       if any? flockmates
         [ find-nearest-neighbor
-          ifelse distance nearest-neighbor < minimum-separation
+      let nn-dist 0
+      if nearest-neighbor != nobody [set nn-dist distance nearest-neighbor]
+          ifelse nn-dist < minimum-separation
             [ repulsion ]
             [ align
               attraction ] ]
 end
 
-;; TODO only fine flockmates that are in turtle link
-to find-flockmates  ;; turtle procedure
-  set flockmates other turtles in-radius vision
+to find-flockmates
+  set flockmates other link-neighbors in-radius vision
 end
 
-to find-nearest-neighbor ;; turtle procedure
-  set nearest-neighbor min-one-of flockmates [distance myself]
-end
-
-to find-burrow
-   ;face patch burrow-location
+to find-nearest-neighbor
+  set nearest-neighbor min-one-of flockmates with [feature = "dog"] [distance myself]
 end
 
 ;;; REPULSION METHODS
 
-to repulsion  ;; turtle procedure
-  turn-away ([heading] of nearest-neighbor) max-repulsion-turn
+to repulsion
+  if nearest-neighbor != nobody
+  [turn-away ([heading] of nearest-neighbor) max-repulsion-turn]
 end
 
 ;;; HEADING / ALIGN METHODS
 
-to align  ;; turtle procedure
+to align
   turn-towards average-flockmate-heading max-heading-turn
 end
 
-to-report average-flockmate-heading  ;; turtle procedure
+to-report average-flockmate-heading
   ;; We can't just average the heading variables here.
   ;; For example, the average of 1 and 359 should be 0,
   ;; not 180.  So we have to use trigonometry.
@@ -102,10 +100,11 @@ end
 ;;; ATTRACTION METHODS
 
 to attraction
+  ifelse distance-from-burrow < burrow-limit * 0.5
   ;; we want to turn towards the group's average heading
-  turn-towards average-heading max-attraction-turn
-  ;; the farther we get from burrow the more we want to orient our heading towards it, normalize to 360
-  turn-towards burrow-heading distance-from-burrow / max-pxcor / burrow-affinity * 360
+  [turn-towards average-heading max-attraction-turn]
+  ;; the farther we get from burrow the more we want to orient our heading towards it, scale it realtive to 180
+  [turn-towards burrow-heading 180 * burrow-affinity / 100]
 end
 
 to-report distance-from-burrow
@@ -143,7 +142,6 @@ end
 ;;; DIRECT MOVEMENT METHODS
 
 to return-to-burrow
-  ;move-to one-of link-neighbors with [feature = "colony"]
   set heading towards one-of link-neighbors with [feature = "colony"]
 end
 
@@ -154,7 +152,30 @@ to check-bounce
     ;; bounce off top and bottom walls
     if abs pycor = max-pycor
     [ set heading (180 - heading) set return true ]
+    ;; check if turtles have all returned
   ask link-neighbors[
-    if any? turtles-here with [feature = "colony"]
+    if count turtles-here >= 0.8 * count link-neighbors and return = true
     [ set return false]]
+end
+
+to flock-to-neighbor
+  ;; if this isn't the finder, cluster and face the finder
+  if found-something = false
+  [set minimum-separation 0
+   face one-of link-neighbors with [found-something = true]]
+end
+
+to evaluate-found-something
+  ;; if all the turtles are at the finder, reset
+  ask link-neighbors[
+    if count turtles-here + 1 >= 0.8 * count link-neighbors and found-something = true
+    [ask one-of turtles with [found-something = true][
+     ifelse gender = "female"
+     [set color pink]
+     [set color blue]
+     if plague = true
+     [set color red]
+     set found-something false
+     set minimum-separation 1.0]
+  ]]
 end

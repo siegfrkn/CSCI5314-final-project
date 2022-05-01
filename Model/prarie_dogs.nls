@@ -14,8 +14,8 @@ turtles-own[
   gender ;; either male or female
   flockmates         ;; agentset of nearby turtles
   nearest-neighbor   ;; closest one of our flockmates
-  burrow-location    ;; location of burrow home
-  burrow-direction   ;; heading of burrow
+  return             ;; if true return to burrow
+  found-something    ;; send flock to this member
 ]
 
 ;;; SETUP METHODS
@@ -51,6 +51,7 @@ to set-up-coteries ;; sprout coteries
     set plague-resistance initial-plague-resistance
     set hunger 0
     set flockmates no-turtles
+    set found-something false
     if random 100 < plague-prevalence [ ;; initialize plague prevalence
       set plague true
       set color red
