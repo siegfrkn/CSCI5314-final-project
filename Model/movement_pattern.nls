@@ -9,7 +9,6 @@
 ;; TODO
 ;; gradient ascent/descent be able to move with intelligence relative to their burrow relative to coterie and relative to food source
 ;; add attraction to burrow
-;; update return-to-burrow function
 
 
 ;;; GLOBAL VARIABLES
@@ -28,8 +27,8 @@ to set-up-flocking
     set max-heading-turn 5.0
     set max-attraction-turn 3.0
     set max-repulsion-turn 1.5
-    set vision 1
-    set minimum-separation 5.0
+    set vision 10
+    set minimum-separation 1.0
 end
 
 ;;; HELPER METHODS FROM FLOCKING MODEL
@@ -102,21 +101,60 @@ end
 
 ;;; ATTRACTION METHODS
 
-to attraction  ;; turtle procedure
+to attraction
+  ;; we want to turn towards the group's average heading
   turn-towards average-heading max-attraction-turn
+  ;; the farther we get from burrow the more we want to orient our heading towards it, normalize to 360
+  turn-towards burrow-heading distance-from-burrow / max-pxcor / burrow-affinity * 360
 end
 
-to-report average-heading  ;; turtle procedure
+to-report distance-from-burrow
+  let burrow-location one-of link-neighbors with [feature = "colony"]
+  report distance burrow-location
+end
+
+to-report average-heading
   ;; "towards myself" gives us the heading from the other turtle
   ;; to me, but we want the heading from me to the other turtle,
   ;; so we add 180
-  let x-component mean [sin (towards myself + 180)] of flockmates
-  let y-component mean [cos (towards myself + 180)] of flockmates
+  let x-component 0
+  let y-component 0
+    set x-component mean [sin (towards myself + 180)] of flockmates
+    set y-component mean [cos (towards myself + 180)] of flockmates
   ifelse x-component = 0 and y-component = 0
     [ report heading ]
     [ report atan x-component y-component ]
 end
 
+to-report burrow-heading
+  ;; "towards myself" gives us the heading from the other turtle
+  ;; to me, but we want the heading from me to the other turtle,
+  ;; so we add 180
+  let x-component 0
+  let y-component 0
+  if feature = "colony"[
+    set x-component sin (towards myself + 180)
+    set y-component cos (towards myself + 180)]
+  ifelse x-component = 0 and y-component = 0
+    [ report heading ]
+    [ report atan x-component y-component ]
+end
+
+;;; DIRECT MOVEMENT METHODS
+
 to return-to-burrow
-    turn-towards burrow-location max-attraction-turn
+  ;move-to one-of link-neighbors with [feature = "colony"]
+  set heading towards one-of link-neighbors with [feature = "colony"]
+end
+
+to check-bounce
+    ;; bounce off left and right walls
+    if abs pxcor = max-pxcor
+    [ set heading (- heading) set return true ]
+    ;; bounce off top and bottom walls
+    if abs pycor = max-pycor
+    [ set heading (180 - heading) set return true ]
+  ask link-neighbors[
+    if any? turtles-here with [feature = "colony"]
+    [ set return false]]
 end

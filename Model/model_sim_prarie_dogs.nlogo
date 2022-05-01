@@ -28,12 +28,41 @@ to go
 
     ;flock
     ;rt random 61 - 30
-    ifelse can-move? 1 and [pcolor] of patch-ahead 1 != black [
-        flock fd 0.2
-        ][
-          rt one-of [ 90 -90 ]
-        ]
-  ] repeat 5 [ ask turtles with [feature = "dog"] [ fd 0.2 ] display ]
+  ;   ifelse can-move? 1 and [pcolor] of patch-ahead 1 != black [
+  ;       flock fd 0.2
+  ;       ][
+  ;         rt one-of [ 90 -90 ]
+  ;       ]
+    ;ask turtles with [feature = "dog"] [ fd 1 ] display
+
+      ;; bounce off left and right walls
+    if abs pxcor = max-pxcor
+    [ set heading (- heading) return-to-burrow]
+    ;; bounce off top and bottom walls
+    if abs pycor = max-pycor
+    [ set heading (180 - heading) return-to-burrow]
+
+    if can-move? 1 and [pcolor] of patch-ahead 1 != black and abs pxcor != max-pxcor and abs pycor != max-pycor[
+    ;if can-move? 1 and [pcolor] of patch-ahead 1 != black [
+      flock
+      rt random one-of [-10 10]
+      repeat 5 [ ask turtles with [feature = "dog"] [ rt random one-of [-10 10] fd 0.2 ] display ]
+      ;ask turtles with [feature = "dog"] [ fd 1 ] display
+      ;][
+       ;rt one-of [90 -90]
+      ;fd 1
+       ;repeat 5 [ ask turtles with [feature = "dog"] [ rt random one-of [-10 10] fd 0.2 ] display ]
+      ]
+    ;repeat 5 [ ask turtles with [feature = "dog"] [ rt random one-of [-10 10] fd 0.2 ] display ]
+
+    ;; bounce off left and right walls
+    if abs pxcor = max-pxcor - 1
+    [ set heading (- heading) ]
+    ;; bounce off top and bottom walls
+    if abs pycor = max-pycor - 1
+    [ set heading (180 - heading) ]
+]
+  ;repeat 5 [ ask turtles with [feature = "dog"] [ fd 0.2 ] display ]
     ;; the following line is used to make the turtles
     ;; animate more smoothly.
     ;;repeat 5 [ ask turtles [ fd 0.2 ] display ]
@@ -135,7 +164,7 @@ initial-colonies
 initial-colonies
 0
 100
-4.0
+7.0
 1
 1
 NIL
@@ -150,7 +179,7 @@ contraceptive-rate
 contraceptive-rate
 0
 100
-0.0
+100.0
 1
 1
 %
@@ -165,7 +194,7 @@ initial-grass-density
 initial-grass-density
 0
 100
-50.0
+72.0
 1
 1
 %
@@ -180,7 +209,7 @@ plague-prevalence
 plague-prevalence
 0
 100
-47.0
+14.0
 1
 1
 %
@@ -195,7 +224,7 @@ plague-contagiousness
 plague-contagiousness
 0
 100
-100.0
+13.0
 1
 1
 %
@@ -255,7 +284,7 @@ MONITOR
 1044
 366
 Healthy
-count turtles with [color != red]
+count turtles with [feature = \"dog\"] - count turtles with [color = red]
 17
 1
 11
@@ -266,7 +295,7 @@ MONITOR
 988
 213
 Total Living
-count turtles
+count turtles with [feature = \"dog\"]
 17
 1
 11
@@ -280,7 +309,7 @@ initial-plague-resistance
 initial-plague-resistance
 0
 500
-260.0
+30.0
 10
 1
 NIL
@@ -308,16 +337,16 @@ number-dead-plague
 1
 11
 
-SWITCH
-108
-540
-236
-573
-show-hunger
-show-hunger
+MONITOR
+917
+469
+1037
+514
+% Grass Remaining
+count patches with [pcolor = green] / count patches * 100
+4
 1
-1
--1000
+11
 
 @#$#@#$#@
 ## WHAT IS IT?

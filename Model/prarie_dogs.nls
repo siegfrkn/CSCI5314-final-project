@@ -39,12 +39,13 @@ to set-up-coteries ;; sprout coteries
      sprout-burrows 1 [
      set feature "colony"
      set shape "square"
-     set size 5
+     set color orange
+     set size 3
      set colony true
     ]
   ]
 
-  ask turtles[
+  ask turtles with [feature = "dog"][
     create-links-with other turtles-here ;; link with members of coterie
     set plague false
     set plague-resistance initial-plague-resistance

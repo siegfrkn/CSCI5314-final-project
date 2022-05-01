@@ -13,7 +13,7 @@ to set-up-farms
 end
 
 to evaluate-hunger
-  set hunger hunger + 5
+  set hunger hunger + 1
   if hunger > 100 [
     set number-dead-hunger number-dead-hunger + 1
     die]
@@ -21,7 +21,8 @@ end
 
 to search-food
   ask patch-here [
-    set pcolor brown
+    if pcolor != black
+      [set pcolor brown]
   ]
   set hunger hunger - (food-energy * food)
 end
