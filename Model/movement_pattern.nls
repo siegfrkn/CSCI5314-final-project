@@ -7,9 +7,9 @@
 ;; 2. found something chip - flock to the finder
 
 ;; TODO
-;; gradient ascent/descent be able to move relative to food source (optimal foragine theory)
-;; more effectively use burrow-affinity to increase amount of time spent at/close-to burrow
-
+;; gradient ascent/descent be able to move relative to food source (optimal foraging theory)
+;; more effectively use burrow-affinity to increase amount of time spent at/close-to burrow, maybe be a nice-to-have
+;; add cost function to barrier / patch type
 
 ;;; GLOBAL VARIABLES
 

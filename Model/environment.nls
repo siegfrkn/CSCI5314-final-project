@@ -1,9 +1,7 @@
 ;; TODO
-;; add cost function to barrier / patch type
-;; solve edge case where last one standing doesnt die of hunger
-;; add burrow-centric behavior
+;; solve edge case where last one standing doesnt die of hunger (I think I've fixed this, but may need additional tuning) - Katrina
 ;; put barriers in specific locations - see Ant model - work with set up food and grass to make sure there is no overlap
-
+;; implement set-up-farms: put food in specific locations - see Ant model - work with set up grass to make sure there is no overlap
 
 ;;; ENVIRONMENT initial
 ;breed [burrows burrow]

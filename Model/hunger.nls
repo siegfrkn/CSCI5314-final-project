@@ -1,7 +1,5 @@
 ;;TODO
-;; implement set-up-farms: put food in specific locations - see Ant model - work with set up grass to make sure there is no overlap
 ;; tune hunger rate to match search-food 
-;; update search food to look for farm patches
 
 ;;; GLOBAL VARIABLES
 

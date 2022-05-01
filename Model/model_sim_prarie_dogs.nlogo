@@ -1,5 +1,6 @@
 ;;; TODO
 ;; is one tick really a week? this makes the movement of return to burrow and go to neighbor who found something behavior really hard.
+;; DO LAST - cleanup unused variables, comments, and styling
 
 ;;; INCLUDE EXTERNAL LIBRARIES
 
@@ -42,7 +43,7 @@ to go
       fd 1]
      ]
 
-    found-something = false; and not any? link-neighbors with [found-something = true]
+    found-something = false
     [if can-move? 1 and [pcolor] of patch-ahead 1 != black and abs pxcor != max-pxcor and abs pycor != max-pycor
      [ifelse distance-from-burrow < burrow-limit and not any? link-neighbors with [found-something = true]
       [rt random one-of [-10 10]
