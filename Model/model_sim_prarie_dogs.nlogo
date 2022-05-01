@@ -10,7 +10,6 @@ to setup
   set-up-seasons
   set-up-coteries
   set-up-grass
-  set-up-burrows
   set-up-farms
   set-up-barriers
   set-up-flocking
@@ -21,19 +20,20 @@ end
 ;;; GO METHODS
 
 to go
-  ask turtles[
+  ask turtles with [feature = "dog"] [
 
     evaluate-hunger
     have-plague
     search-food
 
-    flock
-    rt random 61 - 30
+    ;flock
+    ;rt random 61 - 30
     ifelse can-move? 1 and [pcolor] of patch-ahead 1 != black [
-        fd 1
+        flock fd 0.2
         ][
           rt one-of [ 90 -90 ]
         ]
+  ] repeat 5 [ ask turtles with [feature = "dog"] [ fd 0.2 ] display ]
     ;; the following line is used to make the turtles
     ;; animate more smoothly.
     ;;repeat 5 [ ask turtles [ fd 0.2 ] display ]
@@ -41,7 +41,6 @@ to go
     ;; animation, substitute the following line instead:
     ;;   ask turtles [ fd 1 ]
 
-  ]
 
   set dt time:plus dt 7 "days"
   tick
@@ -136,7 +135,7 @@ initial-colonies
 initial-colonies
 0
 100
-44.0
+4.0
 1
 1
 NIL

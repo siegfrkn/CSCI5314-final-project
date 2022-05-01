@@ -28,8 +28,8 @@ to set-up-flocking
     set max-heading-turn 5.0
     set max-attraction-turn 3.0
     set max-repulsion-turn 1.5
-    set vision 10
-    set minimum-separation 1.0
+    set vision 1
+    set minimum-separation 5.0
 end
 
 ;;; HELPER METHODS FROM FLOCKING MODEL
@@ -55,13 +55,13 @@ end
 ;;; FLOCK METHODS
 
 to flock  ;; turtle procedure
-  find-flockmates
-  if any? flockmates
-    [ find-nearest-neighbor
-      ifelse distance nearest-neighbor < minimum-separation
-        [ repulsion ]
-        [ align
-          attraction ] ]
+      find-flockmates
+      if any? flockmates
+        [ find-nearest-neighbor
+          ifelse distance nearest-neighbor < minimum-separation
+            [ repulsion ]
+            [ align
+              attraction ] ]
 end
 
 ;; TODO only fine flockmates that are in turtle link
@@ -71,6 +71,10 @@ end
 
 to find-nearest-neighbor ;; turtle procedure
   set nearest-neighbor min-one-of flockmates [distance myself]
+end
+
+to find-burrow
+   ;face patch burrow-location
 end
 
 ;;; REPULSION METHODS
@@ -99,10 +103,10 @@ end
 ;;; ATTRACTION METHODS
 
 to attraction  ;; turtle procedure
-  turn-towards average-heading-towards-flockmates max-attraction-turn
+  turn-towards average-heading max-attraction-turn
 end
 
-to-report average-heading-towards-flockmates  ;; turtle procedure
+to-report average-heading  ;; turtle procedure
   ;; "towards myself" gives us the heading from the other turtle
   ;; to me, but we want the heading from me to the other turtle,
   ;; so we add 180
@@ -114,4 +118,5 @@ to-report average-heading-towards-flockmates  ;; turtle procedure
 end
 
 to return-to-burrow
+    turn-towards burrow-location max-attraction-turn
 end

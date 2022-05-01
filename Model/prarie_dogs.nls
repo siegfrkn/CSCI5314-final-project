@@ -3,15 +3,19 @@
 breed [males male] ;; enables breeding male specific behavior
 breed [females female] ;; enables breeding female specific behavior
 breed [pups pup] ;; enables pup specific behavior
+breed [burrows burrow]
 
 ;;; TURTLE PROPERTIES
 turtles-own[
+  feature ;; is it a prarie dog? "dog" "colony"
   hunger ;; range from 0 to 100, death at 100 (potentially increase foraging activity / risk tolerance as hunger increases?)
   plague ;; does this prairie dog have sylvatic plague
   plague-resistance ;; used to trigger plague death
   gender ;; either male or female
   flockmates         ;; agentset of nearby turtles
   nearest-neighbor   ;; closest one of our flockmates
+  burrow-location    ;; location of burrow home
+  burrow-direction   ;; heading of burrow
 ]
 
 ;;; SETUP METHODS
@@ -22,13 +26,21 @@ to set-up-coteries ;; sprout coteries
       set shape "sheep"
       set color blue
       set size 3
+      set feature "dog"
       set gender "male"
     ]
     sprout-females random 5 [ ;; 0-5 breeding females
       set shape "sheep"
       set color pink
       set size 3
+      set feature "dog"
       set gender "female"
+    ]
+     sprout-burrows 1 [
+     set feature "colony"
+     set shape "square"
+     set size 5
+     set colony true
     ]
   ]
 
