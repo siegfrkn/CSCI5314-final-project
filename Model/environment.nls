@@ -4,12 +4,16 @@
 ;; add burrow-centric behavior
 ;; put barriers in specific locations - see Ant model - work with set up food and grass to make sure there is no overlap
 
+
+;;; ENVIRONMENT initial
+;breed [burrows burrow]
+
 ;;; PATCH PROPERTIES
 
 patches-own[ ;; properties of an area
   grass ;; 0, 1, or 2 - 0 is fit for a burrow, 1 is food, 2 is a mutable visual barrier / repellent
   food ;; 0, 1, or 2 - 0 is bare ground, 1 is grass, 2 is a garden / farm
-  burrow ;; does this patch contain a burrow
+  colony ;; does this patch contain a burrow
   barrier ;; does this patch contain an immutable visual barrier
   fence ;; 0, 1, or 2 0 is no fence, 1 is a fence that can be seen through and burrowed under, 2 is an electric fence that can be seen through but not passed
 ]
@@ -36,17 +40,6 @@ to set-up-grass
     ]
     if pcolor = brown [ ;; bare dirt has no food val
       set food 0]
-  ]
-end
-
-to set-up-burrows
-  ask males[ ;; establish the patriarchy (smh)
-    set pcolor grey
-    set burrow true
-    ask neighbors [
-      set burrow true
-      set pcolor grey ;; something different
-    ]
   ]
 end
 
