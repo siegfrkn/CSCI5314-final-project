@@ -1,5 +1,7 @@
 ;;TODO
 ;; implement set-up-farms: put food in specific locations - see Ant model - work with set up grass to make sure there is no overlap
+;; tune hunger rate to match search-food 
+;; update search food to look for farm patches
 
 ;;; GLOBAL VARIABLES
 
@@ -13,16 +15,20 @@ to set-up-farms
 end
 
 to evaluate-hunger
-  set hunger hunger + 1
   if hunger > 100 [
     set number-dead-hunger number-dead-hunger + 1
     die]
 end
 
 to search-food
+  if pcolor = green
+  [set hunger hunger - (food-energy * food)]
+  if pcolor = yellow
+  [set hunger hunger - (food-energy * food * 2)]
+  if pcolor != yellow or pcolor != green
+  [set hunger hunger + 1]
   ask patch-here [
     if pcolor != black
       [set pcolor brown]
   ]
-  set hunger hunger - (food-energy * food)
 end

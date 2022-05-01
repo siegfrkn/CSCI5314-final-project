@@ -1,3 +1,6 @@
+;;; TODO
+;; is one tick really a week? this makes the movement of return to burrow and go to neighbor who found something behavior really hard.
+
 ;;; INCLUDE EXTERNAL LIBRARIES
 
 __includes["prarie_dogs.nls" "environment.nls" "movement_pattern.nls" "hunger.nls" "plague.nls" "seasons.nls"]
@@ -25,52 +28,31 @@ to go
     evaluate-hunger
     have-plague
     search-food
+    check-bounce
+    flock
 
-    ;flock
-    ;rt random 61 - 30
-  ;   ifelse can-move? 1 and [pcolor] of patch-ahead 1 != black [
-  ;       flock fd 0.2
-  ;       ][
-  ;         rt one-of [ 90 -90 ]
-  ;       ]
-    ;ask turtles with [feature = "dog"] [ fd 1 ] display
+    (ifelse
+    return = true and found-something = false and not any? link-neighbors with [found-something = true]
+    [return-to-burrow fd 1]
 
-      ;; bounce off left and right walls
-    if abs pxcor = max-pxcor
-    [ set heading (- heading) return-to-burrow]
-    ;; bounce off top and bottom walls
-    if abs pycor = max-pycor
-    [ set heading (180 - heading) return-to-burrow]
+    any? link-neighbors with [found-something = true]
+    [flock-to-neighbor
+     if found-something = false
+     [rt random one-of [-10 10]
+      fd 1]
+     ]
 
-    if can-move? 1 and [pcolor] of patch-ahead 1 != black and abs pxcor != max-pxcor and abs pycor != max-pycor[
-    ;if can-move? 1 and [pcolor] of patch-ahead 1 != black [
-      flock
-      rt random one-of [-10 10]
-      repeat 5 [ ask turtles with [feature = "dog"] [ rt random one-of [-10 10] fd 0.2 ] display ]
-      ;ask turtles with [feature = "dog"] [ fd 1 ] display
-      ;][
-       ;rt one-of [90 -90]
-      ;fd 1
-       ;repeat 5 [ ask turtles with [feature = "dog"] [ rt random one-of [-10 10] fd 0.2 ] display ]
-      ]
-    ;repeat 5 [ ask turtles with [feature = "dog"] [ rt random one-of [-10 10] fd 0.2 ] display ]
-
-    ;; bounce off left and right walls
-    if abs pxcor = max-pxcor - 1
-    [ set heading (- heading) ]
-    ;; bounce off top and bottom walls
-    if abs pycor = max-pycor - 1
-    [ set heading (180 - heading) ]
-]
-  ;repeat 5 [ ask turtles with [feature = "dog"] [ fd 0.2 ] display ]
-    ;; the following line is used to make the turtles
-    ;; animate more smoothly.
-    ;;repeat 5 [ ask turtles [ fd 0.2 ] display ]
-    ;; for greater efficiency, at the expense of smooth
-    ;; animation, substitute the following line instead:
-    ;;   ask turtles [ fd 1 ]
-
-
+    found-something = false; and not any? link-neighbors with [found-something = true]
+    [if can-move? 1 and [pcolor] of patch-ahead 1 != black and abs pxcor != max-pxcor and abs pycor != max-pycor
+     [ifelse distance-from-burrow < burrow-limit and not any? link-neighbors with [found-something = true]
+      [rt random one-of [-10 10]
+       repeat 5 [ ask turtles with [feature = "dog" and found-something != true] [ rt random one-of [-10 10] fd 0.2 ] display ]]
+      [return-to-burrow fd 1]
+     ]
+    ]
+   )
+   evaluate-found-something
+  ]
   set dt time:plus dt 7 "days"
   tick
 end
@@ -164,7 +146,7 @@ initial-colonies
 initial-colonies
 0
 100
-7.0
+6.0
 1
 1
 NIL
@@ -194,7 +176,7 @@ initial-grass-density
 initial-grass-density
 0
 100
-72.0
+71.0
 1
 1
 %
@@ -209,7 +191,7 @@ plague-prevalence
 plague-prevalence
 0
 100
-14.0
+0.0
 1
 1
 %
@@ -224,7 +206,7 @@ plague-contagiousness
 plague-contagiousness
 0
 100
-13.0
+0.0
 1
 1
 %
@@ -239,7 +221,7 @@ food-energy
 food-energy
 0
 10
-10.0
+7.0
 1
 1
 NIL
@@ -347,6 +329,70 @@ count patches with [pcolor = green] / count patches * 100
 4
 1
 11
+
+SLIDER
+39
+509
+273
+542
+burrow-affinity
+burrow-affinity
+1
+100
+100.0
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+37
+606
+170
+639
+Return to Burrow
+ask turtles with [feature = \"dog\"]\n[set return true]
+NIL
+1
+T
+TURTLE
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+37
+643
+169
+676
+Found Something!
+;; randomly select finder\nask one-of turtles with [feature = \"dog\"]\n;; set finder color\n[ show \"FOUND SOMETHING SET\"\n;let prev-color color\nif not any? link-neighbors with [found-something = true]\n [set color yellow\n show \"FOUND SOMETHING!\"\n  set found-something true]\n;; send all link-neighbors to finder\n;wait 5\n;; free all link-neighbors\n;; restore finder color\n;set color prev-color\n]
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+40
+554
+273
+587
+burrow-limit
+burrow-limit
+1
+100
+73.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
