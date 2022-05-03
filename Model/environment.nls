@@ -1,13 +1,14 @@
-;; TODO
-;; solve edge case where last one standing doesnt die of hunger (I think I've fixed this, but may need additional tuning) - Katrina
-;; put barriers in specific locations - see Ant model - work with set up food and grass to make sure there is no overlap
-;; implement set-up-farms: put food in specific locations - see Ant model - work with set up grass to make sure there is no overlap
-;; regrow grass? is this representative of real life?
+
+;;; GLOBAL VARIABLES
+
+globals [
+  time-to-regrow
+]
 
 ;;; PATCH PROPERTIES
 
 patches-own[ ;; properties of an area
-  grass ;; 0, 1, or 2 - 0 is fit for a burrow, 1 is food, 2 is a mutable visual barrier / repellent
+  grass ;; 0, 1, or 2 - 0 is fit for a burrow, 1 is food, 2 if farm
   food ;; 0, 1, or 2 - 0 is bare ground, 1 is grass, 2 is a garden / farm
   colony ;; does this patch contain a burrow
   barrier ;; does this patch contain an immutable visual barrier
@@ -40,7 +41,7 @@ to set-up-grass
 end
 
 to set-up-barriers
-  ask n-of human-development patches[
+  ask n-of barrier-grass patches[
     let rand-x random-pxcor
     let rand-y random-pycor
     let farm-x random 25
@@ -62,5 +63,32 @@ to set-up-farms
     [ set pcolor yellow 
       set grass 2
       set food 2]
+  ]
+end
+
+to regrow-grass
+  if time-to-regrow = true [
+    let total-patches count patches
+    let current-green-patches count patches with [pcolor = green]
+    let current-grass-density current-green-patches / total-patches * 100
+    if current-grass-density < initial-grass-density [
+      let current-brown-patches count patches with [pcolor = brown]
+      let patches-to-regrow regrowth-percentage / 100 * current-brown-patches * initial-grass-density / 100
+      show patches-to-regrow
+      ask n-of patches-to-regrow patches with [pcolor = brown] [ ;; establish grass
+        set pcolor black
+        set food 1
+      ]
+      if pcolor = brown [ ;; bare dirt has no food val
+        set food 0]
+    ]
+    set time-to-regrow false
+  ]
+end
+
+to check-regrow-grass
+  if ticks mod 100 = 0 and ticks > 0 [
+    set time-to-regrow true
+    show "REGROW"
   ]
 end

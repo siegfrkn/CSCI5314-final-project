@@ -27,6 +27,7 @@ end
 to go
   ask turtles with [feature = "dog"] [
 
+    regrow-grass
     reproduce
     evaluate-hunger
     have-plague
@@ -146,10 +147,10 @@ NIL
 1
 
 SLIDER
-52
-12
-282
-45
+50
+10
+280
+43
 initial-colonies
 initial-colonies
 1
@@ -161,10 +162,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-52
-60
-283
-93
+50
+58
+281
+91
 contraceptive-rate
 contraceptive-rate
 0
@@ -176,25 +177,25 @@ contraceptive-rate
 HORIZONTAL
 
 SLIDER
-51
-157
-283
-190
+49
+155
+281
+188
 initial-grass-density
 initial-grass-density
 0
 100
-71.0
+46.0
 1
 1
 %
 HORIZONTAL
 
 SLIDER
-51
-207
-283
-240
+49
+205
+281
+238
 plague-prevalence
 plague-prevalence
 0
@@ -206,10 +207,10 @@ plague-prevalence
 HORIZONTAL
 
 SLIDER
-51
-301
-284
-334
+49
+299
+282
+332
 plague-contagiousness
 plague-contagiousness
 0
@@ -221,10 +222,10 @@ plague-contagiousness
 HORIZONTAL
 
 SLIDER
-51
-253
+49
+251
+282
 284
-286
 food-energy
 food-energy
 0
@@ -291,10 +292,10 @@ count turtles with [feature = \"dog\"]
 11
 
 SLIDER
-51
-108
-284
-141
+49
+106
+282
+139
 initial-plague-resistance
 initial-plague-resistance
 0
@@ -339,25 +340,25 @@ count patches with [pcolor = green] / count patches * 100
 11
 
 SLIDER
-50
-350
-284
-383
+48
+348
+282
+381
 burrow-affinity
 burrow-affinity
 1
 100
-69.0
+72.0
 1
 1
-NIL
+%
 HORIZONTAL
 
 BUTTON
 167
-539
+581
 300
-572
+614
 Return to Burrow
 ask turtles with [feature = \"dog\"]\n[set return true]
 NIL
@@ -372,9 +373,9 @@ NIL
 
 BUTTON
 31
-539
+581
 163
-572
+614
 Found Something!
 ;; randomly select finder within a single colony\nask one-of turtles with [feature = \"dog\"] [\n   found-something-here\n]
 NIL
@@ -388,10 +389,10 @@ NIL
 0
 
 SLIDER
-49
-396
-282
-429
+47
+394
+280
+427
 burrow-limit
 burrow-limit
 1
@@ -399,29 +400,29 @@ burrow-limit
 24.0
 1
 1
-NIL
+patches
 HORIZONTAL
 
 SLIDER
-48
-442
-281
-475
+46
+440
+279
+473
 number-of-farms
 number-of-farms
 0
 10
-1.0
+5.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-48
-489
-279
-522
+46
+487
+277
+520
 barrier-grass
 barrier-grass
 0
@@ -430,6 +431,21 @@ barrier-grass
 1
 1
 NIL
+HORIZONTAL
+
+SLIDER
+46
+532
+277
+565
+regrowth-percentage
+regrowth-percentage
+0
+100
+28.0
+1
+1
+%
 HORIZONTAL
 
 @#$#@#$#@
@@ -791,5 +807,5 @@ true
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-0
+1
 @#$#@#$#@
