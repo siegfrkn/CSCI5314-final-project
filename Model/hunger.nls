@@ -9,9 +9,6 @@ globals [
 
 ;;; GO METHODS
 
-to set-up-farms
-end
-
 to evaluate-hunger
   if hunger > 100 [
     set number-dead-hunger number-dead-hunger + 1

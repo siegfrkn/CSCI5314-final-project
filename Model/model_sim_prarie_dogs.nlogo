@@ -12,10 +12,11 @@ to setup
   clear-all
 
   set-up-seasons
-  set-up-coteries
   set-up-grass
   set-up-farms
   set-up-barriers
+  ;; must set up the world before spawning prairie dogs
+  set-up-coteries
   set-up-flocking
 
   reset-ticks
@@ -33,27 +34,32 @@ to go
     check-bounce
     flock
 
-    (ifelse
-    return = true and found-something = false and not any? link-neighbors with [found-something = true]
-    [return-to-burrow fd 1]
+    (ifelse return = true and found-something = false and not any? link-neighbors with [found-something = true] [
+      return-to-burrow fd 1]
 
-    any? link-neighbors with [found-something = true]
-    [flock-to-neighbor
-     if found-something = false
-     [rt random one-of [-10 10]
-      fd 1]
-     ]
-
-    found-something = false
-    [if can-move? 1 and [pcolor] of patch-ahead 1 != black and abs pxcor != max-pxcor and abs pycor != max-pycor
-     [ifelse distance-from-burrow < burrow-limit and not any? link-neighbors with [found-something = true]
-      [rt random one-of [-10 10]
-       repeat 5 [ ask turtles with [feature = "dog" and found-something != true] [ rt random one-of [-10 10] fd 0.2 ] display ]]
-      [return-to-burrow fd 1]
-     ]
-    ]
-   )
-   evaluate-found-something
+      any? link-neighbors with [found-something = true] [
+        flock-to-neighbor
+        if found-something = false [
+          rt random one-of [-10 10]
+          if found-something = true [ show "MOVING"]
+          fd 1
+        ]
+      ]
+      found-something = false [
+        if can-move? 1 and [pcolor] of patch-ahead 1 != black and abs pxcor != max-pxcor and abs pycor != max-pycor [
+          ifelse distance-from-burrow < burrow-limit and not any? link-neighbors with [found-something = true] [
+            rt random one-of [-10 10]
+            repeat 5 [
+              ask turtles with [feature = "dog" and found-something != true] [
+                rt random one-of [-10 10] fd 0.2 ] display
+            ]
+          ][
+            return-to-burrow fd 1
+          ]
+        ]
+      ]
+    )
+    evaluate-found-something
   ]
   set dt time:plus dt 7 "days"
   tick
@@ -62,10 +68,10 @@ end
 ;; METADATA FOR SIM INTERFACE BELOW
 @#$#@#$#@
 GRAPHICS-WINDOW
-342
-169
-855
-683
+338
+54
+851
+568
 -1
 -1
 5.0
@@ -89,10 +95,10 @@ ticks
 30.0
 
 BUTTON
-341
-125
-407
-158
+337
+10
+403
+43
 NIL
 setup
 NIL
@@ -106,10 +112,10 @@ NIL
 1
 
 BUTTON
-419
-126
-482
-159
+415
+11
+478
+44
 NIL
 go
 T
@@ -123,10 +129,10 @@ NIL
 1
 
 BUTTON
-494
-126
-575
-159
+490
+11
+571
+44
 go once
 go
 NIL
@@ -140,25 +146,25 @@ NIL
 1
 
 SLIDER
-40
-166
-270
-199
+52
+12
+282
+45
 initial-colonies
 initial-colonies
-0
-100
-13.0
+1
+20
+20.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-40
-214
-271
-247
+52
+60
+283
+93
 contraceptive-rate
 contraceptive-rate
 0
@@ -170,10 +176,10 @@ contraceptive-rate
 HORIZONTAL
 
 SLIDER
-39
-311
-271
-344
+51
+157
+283
+190
 initial-grass-density
 initial-grass-density
 0
@@ -185,55 +191,55 @@ initial-grass-density
 HORIZONTAL
 
 SLIDER
-39
-361
-271
-394
+51
+207
+283
+240
 plague-prevalence
 plague-prevalence
 0
 100
-12.0
+0.0
 1
 1
 %
 HORIZONTAL
 
 SLIDER
-39
-458
-272
-491
+51
+301
+284
+334
 plague-contagiousness
 plague-contagiousness
 0
 100
-27.0
+58.0
 1
 1
 %
 HORIZONTAL
 
 SLIDER
-39
-412
-272
-445
+51
+253
+284
+286
 food-energy
 food-energy
 0
 10
-7.0
+10.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-913
-244
-1018
-289
+909
+129
+1014
+174
 Number of Males
 count turtles with [gender = \"male\"]
 17
@@ -241,10 +247,10 @@ count turtles with [gender = \"male\"]
 11
 
 MONITOR
-1031
-244
-1150
-289
+1027
+129
+1146
+174
 Number of Females
 count turtles with [gender = \"female\"]
 17
@@ -252,10 +258,10 @@ count turtles with [gender = \"female\"]
 11
 
 MONITOR
-916
-320
-973
-365
+912
+205
+969
+250
 Plague
 count turtles with [color = red]
 17
@@ -263,10 +269,10 @@ count turtles with [color = red]
 11
 
 MONITOR
-987
-321
-1044
-366
+983
+206
+1040
+251
 Healthy
 count turtles with [feature = \"dog\"] - count turtles with [color = red]
 17
@@ -274,10 +280,10 @@ count turtles with [feature = \"dog\"] - count turtles with [color = red]
 11
 
 MONITOR
-913
-168
-988
-213
+909
+53
+984
+98
 Total Living
 count turtles with [feature = \"dog\"]
 17
@@ -285,10 +291,10 @@ count turtles with [feature = \"dog\"]
 11
 
 SLIDER
-39
-262
-272
-295
+51
+108
+284
+141
 initial-plague-resistance
 initial-plague-resistance
 0
@@ -300,10 +306,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-916
-393
-1026
-438
+912
+278
+1022
+323
 Died from Hunger
 number-dead-hunger
 17
@@ -311,10 +317,10 @@ number-dead-hunger
 11
 
 MONITOR
-1038
-394
-1154
-439
+1034
+279
+1150
+324
 Death from Plague
 number-dead-plague
 17
@@ -322,10 +328,10 @@ number-dead-plague
 11
 
 MONITOR
-917
-469
-1037
-514
+913
+354
+1033
+399
 % Grass Remaining
 count patches with [pcolor = green] / count patches * 100
 4
@@ -333,25 +339,25 @@ count patches with [pcolor = green] / count patches * 100
 11
 
 SLIDER
-39
-509
-273
-542
+50
+350
+284
+383
 burrow-affinity
 burrow-affinity
 1
 100
-100.0
+69.0
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-37
-606
-170
-639
+167
+539
+300
+572
 Return to Burrow
 ask turtles with [feature = \"dog\"]\n[set return true]
 NIL
@@ -365,12 +371,12 @@ NIL
 1
 
 BUTTON
-37
-643
-169
-676
+31
+539
+163
+572
 Found Something!
-;; randomly select finder within a single colony\nask one-of turtles with [feature = \"dog\"]\n;; set finder color\n[if not any? link-neighbors with [found-something = true]\n [set color yellow \n set found-something true]\n]
+;; randomly select finder within a single colony\nask one-of turtles with [feature = \"dog\"] [\n   found-something-here\n]
 NIL
 1
 T
@@ -379,18 +385,48 @@ NIL
 NIL
 NIL
 NIL
-1
+0
 
 SLIDER
-40
-554
-273
-587
+49
+396
+282
+429
 burrow-limit
 burrow-limit
 1
 100
 24.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+48
+442
+281
+475
+number-of-farms
+number-of-farms
+0
+10
+1.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+48
+489
+279
+522
+barrier-grass
+barrier-grass
+0
+10
+0.0
 1
 1
 NIL
@@ -659,12 +695,12 @@ Polygon -7500403 true true 151 1 185 108 298 108 207 175 242 282 151 216 59 282 
 
 target
 false
-0
-Circle -7500403 true true 0 0 300
+1
+Circle -1184463 true false 0 0 300
 Circle -16777216 true false 30 30 240
-Circle -7500403 true true 60 60 180
+Circle -955883 true false 60 60 180
 Circle -16777216 true false 90 90 120
-Circle -7500403 true true 120 120 60
+Circle -2674135 true true 120 120 60
 
 tree
 false

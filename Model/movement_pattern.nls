@@ -14,21 +14,21 @@
 ;;; GLOBAL VARIABLES
 
 globals [
-    max-heading-turn
-    max-attraction-turn
-    max-repulsion-turn
-    vision
-    minimum-separation
+  max-heading-turn
+  max-attraction-turn
+  max-repulsion-turn
+  vision
+  minimum-separation
 ]
 
 ;;; SETUP METHODS
 
 to set-up-flocking
-    set max-heading-turn 5.0
-    set max-attraction-turn 3.0
-    set max-repulsion-turn 1.5
-    set vision 100
-    set minimum-separation 1.0
+  set max-heading-turn 5.0
+  set max-attraction-turn 3.0
+  set max-repulsion-turn 1.5
+  set vision 100
+  set minimum-separation 1.0
 end
 
 ;;; HELPER METHODS FROM FLOCKING MODEL
@@ -36,11 +36,15 @@ end
 ;; turn right by "turn" degrees (or left if "turn" is negative),
 ;; but never turn more than "max-turn" degrees
 to turn-at-most [turn max-turn]  ;; turtle procedure
-  ifelse abs turn > max-turn
-    [ ifelse turn > 0
-        [ rt max-turn ]
-        [ lt max-turn ] ]
-    [ rt turn ]
+  ifelse abs turn > max-turn [
+    ifelse turn > 0 [
+      rt max-turn 
+    ][
+      lt max-turn
+    ]
+  ][
+    rt turn
+  ]
 end
 
 to turn-towards [new-heading max-turn]
@@ -54,15 +58,22 @@ end
 ;;; FLOCK METHODS
 
 to flock
-      find-flockmates
-      if any? flockmates
-        [ find-nearest-neighbor
-      let nn-dist 0
-      if nearest-neighbor != nobody [set nn-dist distance nearest-neighbor]
-          ifelse nn-dist < minimum-separation
-            [ repulsion ]
-            [ align
-              attraction ] ]
+  find-flockmates
+  if any? flockmates [
+    find-nearest-neighbor
+    let nn-dist 0
+    if nearest-neighbor != nobody [
+      set nn-dist distance nearest-neighbor
+    ]
+    ifelse nn-dist < minimum-separation [
+      repulsion
+    ][
+      align
+      attraction
+    ]
+  ]
+  search-grass
+  avoid-human-development
 end
 
 to find-flockmates
@@ -76,8 +87,9 @@ end
 ;;; REPULSION METHODS
 
 to repulsion
-  if nearest-neighbor != nobody
-  [turn-away ([heading] of nearest-neighbor) max-repulsion-turn]
+  if nearest-neighbor != nobody [
+    turn-away ([heading] of nearest-neighbor) max-repulsion-turn
+  ]
 end
 
 ;;; HEADING / ALIGN METHODS
@@ -92,19 +104,49 @@ to-report average-flockmate-heading
   ;; not 180.  So we have to use trigonometry.
   let x-component sum [dx] of flockmates
   let y-component sum [dy] of flockmates
-  ifelse x-component = 0 and y-component = 0
-    [ report heading ]
-    [ report atan x-component y-component ]
+  ifelse x-component = 0 and y-component = 0 [
+    report heading
+  ][
+    report atan x-component y-component
+  ]
+end
+
+to search-grass
+  if ( patch-ahead 1 != nobody ) [
+    let front-patches patches in-cone 2 120
+    if [pcolor] of one-of front-patches = green  or [pcolor] of one-of front-patches = yellow [
+      ;if [pcolor] of patch-ahead 1 = green or [pcolor] of patch-ahead 1 = yellow[
+      if any? neighbors with [grass >= 1][
+        face one-of neighbors with [grass >= 1]
+      ]
+    ]
+    if [pcolor] of one-of front-patches = yellow [
+      found-something-here
+    ]
+  ]
+  
+end
+
+to avoid-human-development
+  ;; they minimize interaction with human development but not all-out avoid it (not inpenetrable)
+  if ( patch-ahead 1 != nobody ) [
+    let front-patches patches in-cone 2 90
+    if [pcolor] of one-of front-patches = black [
+      set heading (180 - heading) set return true
+    ]
+  ]
 end
 
 ;;; ATTRACTION METHODS
 
 to attraction
-  ifelse distance-from-burrow < burrow-limit * 0.5
-  ;; we want to turn towards the group's average heading
-  [turn-towards average-heading max-attraction-turn]
-  ;; the farther we get from burrow the more we want to orient our heading towards it, scale it realtive to 180
-  [turn-towards burrow-heading 180 * burrow-affinity / 100]
+  ifelse distance-from-burrow < burrow-limit * 0.5 [
+    ;; we want to turn towards the group's average heading
+    turn-towards average-heading max-attraction-turn
+  ][
+    ;; the farther we get from burrow the more we want to orient our heading towards it, scale it realtive to 180
+    turn-towards burrow-heading 180 * burrow-affinity / 100
+  ]
 end
 
 to-report distance-from-burrow
@@ -118,11 +160,13 @@ to-report average-heading
   ;; so we add 180
   let x-component 0
   let y-component 0
-    set x-component mean [sin (towards myself + 180)] of flockmates
-    set y-component mean [cos (towards myself + 180)] of flockmates
-  ifelse x-component = 0 and y-component = 0
-    [ report heading ]
-    [ report atan x-component y-component ]
+  set x-component mean [sin (towards myself + 180)] of flockmates
+  set y-component mean [cos (towards myself + 180)] of flockmates
+  ifelse x-component = 0 and y-component = 0 [
+    report heading
+  ][
+    report atan x-component y-component
+  ]
 end
 
 to-report burrow-heading
@@ -131,12 +175,15 @@ to-report burrow-heading
   ;; so we add 180
   let x-component 0
   let y-component 0
-  if feature = "colony"[
+  if feature = "colony" [
     set x-component sin (towards myself + 180)
-    set y-component cos (towards myself + 180)]
-  ifelse x-component = 0 and y-component = 0
-    [ report heading ]
-    [ report atan x-component y-component ]
+    set y-component cos (towards myself + 180)
+  ]
+  ifelse x-component = 0 and y-component = 0 [
+    report heading
+  ][
+    report atan x-component y-component
+  ]
 end
 
 ;;; DIRECT MOVEMENT METHODS
@@ -146,36 +193,58 @@ to return-to-burrow
 end
 
 to check-bounce
-    ;; bounce off left and right walls
-    if abs pxcor = max-pxcor
-    [ set heading (- heading) set return true ]
-    ;; bounce off top and bottom walls
-    if abs pycor = max-pycor
-    [ set heading (180 - heading) set return true ]
-    ;; check if turtles have all returned
-  ask link-neighbors[
-    if count turtles-here >= 0.8 * count link-neighbors and return = true
-    [ set return false]]
+  ;; bounce off left and right walls
+  if abs pxcor = max-pxcor [
+    set heading (- heading) set return true
+  ]
+  ;; bounce off top and bottom walls
+  if abs pycor = max-pycor [
+    set heading (180 - heading) set return true
+  ]
+  ;; check if turtles have all returned
+  ask link-neighbors [
+    if count turtles-here >= 0.8 * count link-neighbors and return = true [
+      set return false
+    ]
+  ]
 end
 
 to flock-to-neighbor
   ;; if this isn't the finder, cluster and face the finder
-  if found-something = false
-  [set minimum-separation 0
-   face one-of link-neighbors with [found-something = true]]
+  if found-something = false [
+    set minimum-separation 0
+    face one-of link-neighbors with [found-something = true]
+  ]
 end
 
 to evaluate-found-something
-  ;; if all the turtles are at the finder, reset
-  ask link-neighbors[
-    if count turtles-here + 1 >= 0.8 * count link-neighbors and found-something = true
-    [ask one-of turtles with [found-something = true][
-     ifelse gender = "female"
-     [set color pink]
-     [set color blue]
-     if plague = true
-     [set color red]
-     set found-something false
-     set minimum-separation 1.0]
-  ]]
+  ;; if most of the turtles are at the finder, reset
+  ask link-neighbors [
+    if count turtles-here + 1 >= 0.8 * count link-neighbors and found-something = true [
+      ask one-of turtles with [found-something = true] [
+        ifelse gender = "female" [
+          set color pink
+        ][
+          set color blue
+        ]
+        if plague = true [
+          set color red
+        ]
+        set found-something false
+        set minimum-separation 1.0
+        set shape "sheep"
+      ]
+    ]
+  ]
+end
+
+to found-something-here
+  ;; randomly select finder within a single colony
+  ask one-of turtles with [feature = "dog"] [
+    ;; set finder color
+    if not any? link-neighbors with [found-something = true] [
+      set shape "target"
+      set found-something true
+    ]
+  ]
 end

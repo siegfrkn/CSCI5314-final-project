@@ -4,9 +4,6 @@
 ;; implement set-up-farms: put food in specific locations - see Ant model - work with set up grass to make sure there is no overlap
 ;; regrow grass? is this representative of real life?
 
-;;; ENVIRONMENT initial
-;breed [burrows burrow]
-
 ;;; PATCH PROPERTIES
 
 patches-own[ ;; properties of an area
@@ -34,7 +31,7 @@ to set-up-grass
       ]
       if grass = 2 [
         set pcolor yellow
-        set food 1
+        set food 2
       ]
     ]
     if pcolor = brown [ ;; bare dirt has no food val
@@ -43,16 +40,27 @@ to set-up-grass
 end
 
 to set-up-barriers
-  crt 1 [
-    setxy 50 50
-    set heading 180
-    repeat 4 [
-      repeat 100 [
-        ask patch-here [ set pcolor black ]
-        fd 1
-      ]
-      rt 90
-    ]
-    die
+  ask n-of human-development patches[
+    let rand-x random-pxcor
+    let rand-y random-pycor
+    let farm-x random 25
+    let farm-y random 25
+    ask patches with [pxcor <= rand-x + farm-x and pxcor > rand-x and pycor >= rand-y and pycor < rand-y + farm-y]
+    [ set pcolor black 
+      set grass 0
+      set food 0]
+  ]
+end
+
+to set-up-farms
+  ask n-of number-of-farms patches[
+    let rand-x random-pxcor
+    let rand-y random-pycor
+    let farm-x random 25
+    let farm-y random 25
+    ask patches with [pxcor <= rand-x + farm-x and pxcor > rand-x and pycor >= rand-y and pycor < rand-y + farm-y]
+    [ set pcolor yellow 
+      set grass 2
+      set food 2]
   ]
 end

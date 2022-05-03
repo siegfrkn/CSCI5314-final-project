@@ -26,7 +26,8 @@ turtles-own[
 ;;; SETUP METHODS
 
 to set-up-coteries ;; sprout coteries
-  ask n-of initial-colonies patches [
+  ask n-of initial-colonies patches with [pcolor = green] [
+    
     sprout-males 1[ ;; 1 breeding male
       set shape "sheep"
       set color blue
@@ -46,7 +47,6 @@ to set-up-coteries ;; sprout coteries
      set shape "square"
      set color orange
      set size 3
-     set colony true
     ]
   ]
 
@@ -67,13 +67,14 @@ end
 ;;; GO METHODS
 
 to reproduce
-    ask males [
-      ask link-neighbors [
+  ask males with [color = blue] [
+    ask link-neighbors with [color = pink] [
+      ask link-neighbors with [feature = "colony"][
           ask patch-here [
         sprout-pups random (10 * (1 - contraceptive-rate / 100)) [
           set shape "sheep"
           set color yellow
-          set gender one-of ["male" "female"]
+        ]
         ]
       ]
     ]
