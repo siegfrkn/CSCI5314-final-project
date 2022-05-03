@@ -62,6 +62,7 @@ to go
     )
     evaluate-found-something
   ]
+  check-regrow-grass
   set dt time:plus dt 7 "days"
   tick
 end
@@ -442,7 +443,7 @@ regrowth-percentage
 regrowth-percentage
 0
 100
-28.0
+36.0
 1
 1
 %
