@@ -26,7 +26,10 @@ end
 to go
   ask turtles with [feature = "dog"] [
 
-    reproduce
+    if ticks mod 52 = 0 and ticks > 0 [
+        reproduce
+    ]
+    age
     evaluate-hunger
     have-plague
     search-food
@@ -148,7 +151,7 @@ initial-colonies
 initial-colonies
 0
 100
-13.0
+1.0
 1
 1
 NIL
@@ -163,7 +166,7 @@ contraceptive-rate
 contraceptive-rate
 0
 100
-100.0
+85.0
 1
 1
 %

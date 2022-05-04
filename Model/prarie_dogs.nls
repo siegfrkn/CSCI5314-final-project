@@ -21,6 +21,7 @@ turtles-own[
   nearest-neighbor   ;; closest one of our flockmates
   return             ;; if true return to burrow
   found-something    ;; send flock to this member
+  birth-tick         ;; used for aging pups into adulthood
 ]
 
 ;;; SETUP METHODS
@@ -33,6 +34,7 @@ to set-up-coteries ;; sprout coteries
       set size 3
       set feature "dog"
       set gender "male"
+      set birth-tick 0
     ]
     sprout-females 1 + random 4 [ ;; 1-5 breeding females
       set shape "sheep"
@@ -40,6 +42,7 @@ to set-up-coteries ;; sprout coteries
       set size 3
       set feature "dog"
       set gender "female"
+      set birth-tick 0
     ]
      sprout-burrows 1 [
      set feature "colony"
@@ -66,16 +69,63 @@ end
 
 ;;; GO METHODS
 
-to reproduce
-    ask males [
-      ask link-neighbors [
-          ask patch-here [
-        sprout-pups random (10 * (1 - contraceptive-rate / 100)) [
-          set shape "sheep"
-          set color yellow
-          set gender one-of ["male" "female"]
+to age
+    if ticks - birth-tick > 104 [
+        if gender = "male" [
+            set color blue
+            set size 3
         ]
-      ]
+        if gender = "female" [
+            set color pink
+            set size 3
+        ]
     ]
-  ]
+end
+
+to reproduce
+    let current-males turtle-set males
+    ask current-males with [color = blue] [
+        let dad myself
+        let curr-burrow one-of link-neighbors with [feature = "colony"]
+        ask link-neighbors [
+            if color = pink [
+                let mom myself
+                ask patch-here [
+                    if random 100 > contraceptive-rate [
+                        repeat 2 [
+                            let curr-gender one-of ["male" "female"]
+                            if curr-gender = "male" [
+                                sprout-males 1 [
+                                    set shape "sheep"
+                                    set color yellow
+                                    set size 2
+                                    set feature "dog"
+                                    set gender "male"
+                                    create-links-with link-neighbors
+                                    create-link-with dad
+                                    create-link-with mom
+                                    create-link-with curr-burrow
+                                    set birth-tick ticks
+                                ]
+                            ]
+                            if curr-gender = "female" [
+                                sprout-females 1 [
+                                    set shape "sheep"
+                                    set color yellow
+                                    set size 2
+                                    set feature "dog"
+                                    set gender "female"
+                                    create-links-with link-neighbors
+                                    create-link-with dad
+                                    create-link-with mom
+                                    create-link-with curr-burrow
+                                    set birth-tick ticks
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
 end
