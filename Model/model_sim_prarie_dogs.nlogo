@@ -28,7 +28,10 @@ to go
   ask turtles with [feature = "dog"] [
 
     regrow-grass
-    reproduce
+    if ticks mod 52 = 0 and ticks > 0 [
+        reproduce
+    ]
+    age
     evaluate-hunger
     have-plague
     search-food
@@ -171,7 +174,7 @@ contraceptive-rate
 contraceptive-rate
 0
 100
-100.0
+85.0
 1
 1
 %

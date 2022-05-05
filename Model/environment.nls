@@ -44,8 +44,8 @@ to set-up-barriers
   ask n-of barrier-grass patches[
     let rand-x random-pxcor
     let rand-y random-pycor
-    let farm-x random 25
-    let farm-y random 25
+    let farm-x random 24 + 1
+    let farm-y random 24 + 1
     ask patches with [pxcor <= rand-x + farm-x and pxcor > rand-x and pycor >= rand-y and pycor < rand-y + farm-y]
     [ set pcolor black 
       set grass 0
