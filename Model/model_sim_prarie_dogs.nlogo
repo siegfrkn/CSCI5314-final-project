@@ -1,6 +1,3 @@
-;;; TODO
-;; is one tick really a week? this makes the movement of return to burrow and go to neighbor who found something behavior really hard.
-;; DO LAST - cleanup unused variables, comments, and styling
 
 ;;; INCLUDE EXTERNAL LIBRARIES
 
@@ -15,7 +12,7 @@ to setup
   set-up-grass
   set-up-farms
   set-up-barriers
-  ;; must set up the world before spawning prairie dogs
+  ; must set up the world before spawning prairie dogs
   set-up-coteries
   set-up-flocking
 
@@ -159,7 +156,7 @@ initial-colonies
 initial-colonies
 1
 20
-20.0
+4.0
 1
 1
 NIL
@@ -174,7 +171,7 @@ contraceptive-rate
 contraceptive-rate
 0
 100
-96.0
+100.0
 1
 1
 %

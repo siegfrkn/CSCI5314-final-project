@@ -10,9 +10,6 @@ globals [
 patches-own[ ;; properties of an area
   grass ;; 0, 1, or 2 - 0 is fit for a burrow, 1 is food, 2 if farm
   food ;; 0, 1, or 2 - 0 is bare ground, 1 is grass, 2 is a garden / farm
-  colony ;; does this patch contain a burrow
-  barrier ;; does this patch contain an immutable visual barrier
-  fence ;; 0, 1, or 2 0 is no fence, 1 is a fence that can be seen through and burrowed under, 2 is an electric fence that can be seen through but not passed
 ]
 
 ;;; SETUP METHODS

@@ -1,13 +1,11 @@
 ;;; TODO
-;; should colonies move when food runs out? is this necessary or a nice-to-have?
+;; colonies move when food runs out, nice-to-have
 ;; should there be a limit on hunger/health for reproduction?
-;; we "birth" pups, but do we need to grow pups into M/F at some point to keep colonies going?
 
 ;;; ENVIRONMENT INIT
 
 breed [males male] ;; enables breeding male specific behavior
 breed [females female] ;; enables breeding female specific behavior
-breed [pups pup] ;; enables pup specific behavior
 breed [burrows burrow]
 
 ;;; TURTLE PROPERTIES
