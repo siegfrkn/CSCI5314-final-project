@@ -100,9 +100,9 @@ ticks
 30.0
 
 BUTTON
-337
+345
 10
-403
+411
 43
 NIL
 setup
@@ -117,10 +117,10 @@ NIL
 1
 
 BUTTON
-415
-11
-478
-44
+420
+10
+483
+43
 NIL
 go
 T
@@ -135,9 +135,9 @@ NIL
 
 BUTTON
 490
-11
+10
 571
-44
+43
 go once
 go
 NIL
@@ -174,7 +174,7 @@ contraceptive-rate
 contraceptive-rate
 0
 100
-85.0
+96.0
 1
 1
 %
@@ -431,7 +431,7 @@ barrier-grass
 barrier-grass
 0
 10
-0.0
+1.0
 1
 1
 NIL
@@ -451,6 +451,40 @@ regrowth-percentage
 1
 %
 HORIZONTAL
+
+BUTTON
+640
+10
+747
+43
+Toggle Turtles
+ifelse any? turtles with [hidden? = false] [\n   ask turtles [\n   hide-turtle ]\n][\n   ask turtles [\n   show-turtle ]\n]
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+750
+10
+847
+43
+Toggle Links
+ifelse any? links with [hidden? = false] [\n   ask turtles [\n      ask my-links [\n      hide-link\n      ]\n   ]\n][\n   ask turtles [\n      ask my-links [\n      show-link\n      ]\n   ]\n]
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
