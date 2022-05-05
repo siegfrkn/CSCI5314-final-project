@@ -13,3 +13,10 @@ This is the landing page for the final project for CSCI5314 in Spring 2022 for t
 - Google Doc for Presentation: https://docs.google.com/presentation/d/1LE5FAd1UFJk_3YCavUwyyvQHlO8So6hxJuUYPzfWl-g/edit?usp=sharing
 - Google Sheet for Model-Finding: https://docs.google.com/spreadsheets/d/1lcTjjwY-U8QII08nSXky6xaJJQAk46AR_dzk2PUcODM/edit?usp=sharing
 - Google Doc for Final Paper: https://docs.google.com/document/d/1MP-Z_0f2xnN1oxDZAtqNsS152NwaA9VJ_8eBxwj0Sww/edit?usp=sharing
+
+### Directory Info
+Model - hosts all model files and information for running model
+Presentation - hosts all files related to presentation materials
+Proposal - hosts all files related to proposal materials
+Paper - hosts all files related to paper materials
+Resources - all files and copies of resources used in generation of this project
